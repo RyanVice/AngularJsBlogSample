@@ -1,4 +1,4 @@
-describe('app', function () {
+describe('MainController', function () {
 
     var endpointController;
 
@@ -72,7 +72,8 @@ describe('app', function () {
 
     beforeEach(module('app'));
 
-    it('should return 2 posts by Bret ', inject(function ($rootScope, $controller, $httpBackend) {
+    it('Give $scope.username is Bret When calling getPosts() Then Brets two posts are returned',
+        inject(function ($rootScope, $controller, $httpBackend) {
 
         var expectedPosts = [
             {
