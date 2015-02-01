@@ -124,4 +124,50 @@ describe('MainController', function () {
             return true;
         }
     }));
+
+    it('Give $scope.username is Bret When calling getPosts() and getting a 404 from /users Then scope.error.status is 404',
+        inject(function ($rootScope, $controller, $httpBackend) {
+
+            $httpBackend.whenGET('http://jsonplaceholder.typicode.com/users')
+                .respond(404, null, null, "Not Found");
+            $httpBackend.whenGET('http://jsonplaceholder.typicode.com/posts')
+                .respond(dummyPosts);
+
+            var scope = $rootScope.$new();
+
+            scope.username = 'Bret';
+
+            endpointController = $controller("MainController", { $scope: scope });
+
+            scope.getPosts();
+
+            $httpBackend.flush();
+
+            expect(endpointController).not.toBeNull();
+            expect(scope.error).not.toBeNull();
+            expect(scope.error.status).toBe(404);
+        }));
+
+    it('Give $scope.username is Bret When calling getPosts() and getting a 500 from /posts Then scope.error.status is 500',
+        inject(function ($rootScope, $controller, $httpBackend) {
+
+            $httpBackend.whenGET('http://jsonplaceholder.typicode.com/users')
+                .respond(dummyUsers);
+            $httpBackend.whenGET('http://jsonplaceholder.typicode.com/posts')
+                .respond(500, null, null, "Internal Server Error");
+
+            var scope = $rootScope.$new();
+
+            scope.username = 'Bret';
+
+            endpointController = $controller("MainController", { $scope: scope });
+
+            scope.getPosts();
+
+            $httpBackend.flush();
+
+            expect(endpointController).not.toBeNull();
+            expect(scope.error).not.toBeNull();
+            expect(scope.error.status).toBe(500);
+        }));
 });

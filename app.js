@@ -3,39 +3,32 @@ angular.module('app', [])
         $scope.posts = [];
         $scope.message = "";
 
-        var getUserByUserName = function (userName) {
-            var deffered = $q.defer();
+        function getUserByUserName(userName) {
 
-            $http.get('http://jsonplaceholder.typicode.com/users')
-                .success(function (response) {
+            return $http.get('http://jsonplaceholder.typicode.com/users')
+                .then(function (response) {
 
                     var user;
 
-                    for (var i = 0; i < response.length; i++) {
-                        if (response[i].username === userName) {
-                            user = response[i];
+                    for (var i = 0; i < response.data.length; i++) {
+                        if (response.data[i].username === userName) {
+                            user = response.data[i];
                             break;
                         }
                     }
 
-                    deffered.resolve(user);
-                })
-                .error(function (error) {
-                    deferred.reject(error);
+                    return user;
                 });
-
-            return deffered.promise;
         };
 
-        var getPostByUserName = function (userName) {
-            var deffered = $q.defer();
+        function getPostByUserName(userName) {
 
-            getUserByUserName(userName)
+            return getUserByUserName(userName)
                 .then(function (user) {
 
                     $log.debug('BlogService.getUserByUserName.then user:' + user + ' user.id: ' + user.id);
 
-                    getPosts()
+                    return getPosts()
                         .then(function (posts) {
 
                             var postsByUser = [];
@@ -46,46 +39,33 @@ angular.module('app', [])
                                 }
                             }
 
-                            deffered.resolve(postsByUser);
-                        },
-
-                        function (error) {
-                            deffered.reject(error);
+                            return postsByUser;
                         });
                 });
-
-            return deffered.promise;
         };
 
-        var getPosts = function () {
-            var deffered = $q.defer();
-
-            $http.get('http://jsonplaceholder.typicode.com/posts')
-                .success(function (response) {
-                    deffered.resolve(response);
-                })
-                .error(function (error) {
-                    deferred.reject(error);
+        function getPosts() {
+            return $http.get('http://jsonplaceholder.typicode.com/posts')
+                .then(function (response) {
+                    return response.data;
                 });
-
-            return deffered.promise;
         };
 
         $scope.getPosts = function () {
             getPostByUserName($scope.username)
-                .then(function (response) {
+                .then(function (posts) {
 
-                    $log.debug('MainController.getPostByUserName reponse.length: ' + response.length);
+                    $log.debug('MainController.getPostByUserName reponse.length: ' + posts.length);
 
                     $scope.posts.length = 0;
 
                     $scope.posts.username = $scope.username;
 
-                    for (var i = 0; i < response.length; i++) {
-                        $scope.posts.push(response[i]);
+                    for (var i = 0; i < posts.length; i++) {
+                        $scope.posts.push(posts[i]);
                     }
                 }, function (error) {
-                    $scope.message = "No posts found."
+                    $scope.error = error;
                 });
         };
     });
