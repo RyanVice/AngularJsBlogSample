@@ -143,8 +143,9 @@ describe('MainController', function () {
 
             $httpBackend.flush();
 
-            expect(endpointController).not.toBeNull();
-            expect(scope.error).not.toBeNull();
+            expect(endpointController).toBeTruthy();
+            expect(scope.error).toBeTruthy();
+            expect(scope.error.userMessage).toBe("User could not be found.");
             expect(scope.error.status).toBe(404);
         }));
 
