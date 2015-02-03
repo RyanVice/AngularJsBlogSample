@@ -19,9 +19,10 @@ angular.module('app', [])
 
                     return user;
                 }).catch(function (error) {
-                    throw( new Error("Just to prove catch() works! ") );
+                    $log.error(error);
+                    return $q.reject("That user could not be found.");
                 });
-        };
+        }
 
         function getUsers() {
             return $http.get('http://jsonplaceholder.typicode.com/users');
@@ -29,7 +30,7 @@ angular.module('app', [])
 
         function getPostByUser(user){
 
-            return getPosts()
+            return getAllPosts()
                 .then(function (posts) {
 
                     var postsByUser = [];
@@ -44,12 +45,12 @@ angular.module('app', [])
                 });
         }
 
-        function getPosts() {
+        function getAllPosts() {
             return $http.get('http://jsonplaceholder.typicode.com/posts')
                 .then(function (response) {
                     return response.data;
                 });
-        };
+        }
 
         function addPostsToScope(posts) {
 
@@ -62,7 +63,7 @@ angular.module('app', [])
             for (var i = 0; i < posts.length; i++) {
                 $scope.posts.push(posts[i]);
             }
-        };
+        }
 
         $scope.getPosts = function () {
             getUserByUserName($scope.username)
@@ -71,5 +72,5 @@ angular.module('app', [])
                 .catch(function (error) {
                         $scope.error = error;
                 });
-        };
+        }
     });

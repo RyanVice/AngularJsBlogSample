@@ -125,7 +125,7 @@ describe('MainController', function () {
         }
     }));
 
-    it('Give $scope.username is Bret When calling getPosts() and getting a 404 from /users Then scope.error.status is 404',
+    it('Give $scope.username is Bret When calling getPosts() and getting a 404 from /users Then scope.error has a message indicating that the user wasnt found',
         inject(function ($rootScope, $controller, $httpBackend) {
 
             $httpBackend.whenGET('http://jsonplaceholder.typicode.com/users')
@@ -145,8 +145,7 @@ describe('MainController', function () {
 
             expect(endpointController).toBeTruthy();
             expect(scope.error).toBeTruthy();
-            expect(scope.error.userMessage).toBe("User could not be found.");
-            expect(scope.error.status).toBe(404);
+            expect(scope.error).toBe("That user could not be found.");
         }));
 
     it('Give $scope.username is Bret When calling getPosts() and getting a 500 from /posts Then scope.error.status is 500',
